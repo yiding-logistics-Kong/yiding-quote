@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>义鼎国际 · 在线询价</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;background:#f5f7fb;color:#1e293b;min-height:100vh;padding-bottom:70px}
+.hdr{background:linear-gradient(135deg,#1a365d 0%,#2563eb 100%);color:#fff;position:sticky;top:0;z-index:100}
+.hdr-inner{max-width:1000px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+.wrap{max-width:1000px;margin:0 auto;padding:0 12px 20px}
+.cd{background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:18px;margin-top:12px}
+.gr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg{display:flex;flex-direction:column;gap:3px}
+.fg label{font-size:11px;font-weight:600;color:#64748b}
+.fg select,.fg input{padding:9px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;outline:none;background:#fff;width:100%;color:#1e293b}
+.fg select:focus,.fg input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.08)}
+.btn{padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;width:100%;background:linear-gradient(135deg,#1e40af,#2563eb);color:#fff;margin-top:12px}
+.res{display:none;margin-top:12px;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;background:#fff}
+.res-inner{padding:18px 20px}
+.res-price{font-size:40px;font-weight:800;color:#1e3a5f;line-height:1.1}
+.res-detail{font-size:13px;color:#64748b;margin-top:4px}
+.res-extra{margin-top:12px;padding-top:10px;border-top:1px dashed #e2e8f0;display:flex;flex-wrap:wrap;gap:6px}
+.extra-tag{display:inline-block;padding:4px 10px;border-radius:5px;font-size:11px}
+.tabs-wrap{max-width:1000px;margin:0 auto;padding:10px 12px 0}
+.tabs{display:flex;gap:3px;background:#fff;border-radius:10px;padding:3px;box-shadow:0 1px 3px rgba(0,0,0,0.05);overflow-x:auto}
+.tab{flex:1;padding:9px 6px;text-align:center;border:none;background:transparent;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:#64748b;white-space:nowrap;min-width:55px}
+.tab.active{background:#1e3a5f;color:#fff}
+.inq-wrap{display:none;margin-top:12px}
+.inq-btn{padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;width:100%;background:linear-gradient(135deg,#059669,#10b981);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:999}
+.modal-overlay.show{display:block}
+.modal{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:16px 16px 0 0;z-index:1000;padding:24px 20px 20px;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:17px;font-weight:700;margin-bottom:4px}
+.modal .sub{font-size:12px;color:#64748b;margin-bottom:16px}
+.modal .fg{margin-bottom:12px}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:24px;color:#64748b;cursor:pointer;padding:4px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#065f46;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:2000;box-shadow:0 4px 20px rgba(0,0,0,0.15);display:none;text-align:center}
+.toast.error{background:#991b1b}
+.info{font-size:12px;color:#64748b;line-height:1.6;margin-top:12px;padding:12px 16px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0}
+.floating-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;padding:10px 16px;display:flex;gap:10px;z-index:50}
+.floating-bar a{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none}
+.floating-bar .btn-tel{background:#1e40af;color:#fff}
+.floating-bar .btn-wx{background:#059669;color:#fff}
+.floating-bar .btn-share{background:#f3f4f6;color:#1e293b}
+@media(min-width:640px){.hdr-inner,.wrap,.tabs-wrap{padding-left:24px;padding-right:24px}.gr{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="hdr"><div class="hdr-inner">
+<div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;flex-shrink:0">义</div><div><div style="font-size:17px;font-weight:700">义鼎国际供应链</div><div style="font-size:10px;opacity:0.7">全球物流 · 专业跨境</div></div></div>
+<a href="tel:18237490110" style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.12);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;color:#fff">📞 联系</a>
+</div></div>
+
+<div class="tabs-wrap">
+<div class="tabs" id="tabs">
+<button class="tab active" data-tab="jiyun" onclick="switchTab('jiyun')">集运小包</button>
+<button class="tab" data-tab="kong" onclick="switchTab('kong')">空派专线</button>
+<button class="tab" data-tab="hai" onclick="switchTab('hai')">海派专线</button>
+<button class="tab" data-tab="xsd" onclick="switchTab('xsd')">限时达</button>
+<button class="tab" data-tab="big" onclick="switchTab('big')">超大件</button>
+<button class="tab" data-tab="tk" onclick="switchTab('tk')">卡派</button>
+</div></div>
+
+<div class="wrap">
+<div class="cd">
+<h2 style="font-size:15px;font-weight:700;margin-bottom:14px;color:#1e3a5f;display:flex;align-items:center;gap:8px"><span style="display:inline-block;width:3px;height:14px;background:#2563eb;border-radius:2px"></span>查询跨境物流运费</h2>
+<div class="gr">
+<div class="fg"><label>目的地</label><select id="ct" onchange="onCountryChange()"><option value="">请选择</option><option value="US">美国</option><option value="UK">英国</option><option value="DE">德国</option><option value="CA">加拿大</option><option value="AU">澳大利亚</option></select></div>
+<div class="fg"><label>服务类型</label><select id="sv"><option>请先选择目的地</option></select></div>
+<div class="fg"><label>货物类型</label><select id="cg"><option value="ph">普货</option><option value="mg">敏感</option><option value="tz">特货</option></select></div>
+<div class="fg"><label>重量 (KG)</label><input id="wt" type="number" step="0.5" min="0.1" placeholder="输入重量"></div>
+<div class="fg" id="znGrp"><label>美国分区</label><select id="zn"><option value="">自动</option><option value="w">美西(邮编8/9)</option><option value="c">美中(邮编4-7)</option><option value="e">美东(邮编0-3)</option></select></div>
+<div class="fg" id="auPcGrp"><label>澳大利亚邮编</label><input id="auPc" type="text" maxlength="4" placeholder="如: 2000" oninput="this.value=this.value.replace(/\D/g,'')"></div>
+<div class="fg" id="usBigPcGrp"><label>美国邮编 (超大件)</label><input id="usBigPc" type="text" maxlength="5" placeholder="如: 90210" oninput="this.value=this.value.replace(/\D/g,'')"></div>
+</div>
+<div class="toggle-row" id="addrGrp" style="display:flex;align-items:center;gap:8px;margin-top:10px">
+<label class="toggle-wrap" id="privAddrToggle" onclick="togglePrivateAddr()" style="display:flex;align-items:center;gap:6px;padding:5px 10px;background:#f8fafc;border-radius:7px;border:1px solid #e2e8f0;cursor:pointer;user-select:none"><span class="toggle-switch" style="position:relative;width:32px;height:18px;background:#cbd5e1;border-radius:9px;flex-shrink:0"></span><span class="toggle-label" style="font-size:11px;font-weight:500;color:#64748b">私人地址（住宅地址加收费用）</span></label>
+</div>
+<button class="btn" onclick="calc()">🚀 查询报价</button>
+
+<div class="res" id="res"><div class="res-inner">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+<div><div style="font-size:11px;font-weight:600;color:#64748b;letter-spacing:.5px">预估运费</div><div class="res-detail" id="dt"></div></div>
+<div><div class="res-price" id="pr">--</div><div class="res-detail" id="nt"></div></div>
+</div>
+<div class="res-extra" id="extra"></div>
+</div></div>
+
+<div class="inq-wrap" id="inqWrap">
+<button class="inq-btn" onclick="showInquiryModal()">📩 立即询价 · 24小时内回复</button>
+</div>
+
+<div class="info">💡 本报价为系统估算，含双清包税。偏远费、超长超重、单独报关、私人地址等另计，以客服确认为准。</div>
+<div class="info" style="margin-top:8px">
+<span>📞 <strong>18237490110 孔先生</strong> &nbsp;|&nbsp; <a href="https://www.ydcn666.com" target="_blank" style="color:#2563eb;text-decoration:none">🌐 官网</a> &nbsp;|&nbsp; <a href="https://www.17track.net/zh-cn" target="_blank" style="color:#2563eb;text-decoration:none">📦 查轨迹</a>
+</div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="hideInquiryModal(event)">
+<div class="modal" id="inquiryModal" onclick="event.stopPropagation()">
+<div style="width:36px;height:4px;background:#d1d5db;border-radius:2px;margin:0 auto 16px"></div>
+<button class="modal-close" onclick="hideInquiryModal()">x</button>
+<h3>📩 提交询价单</h3>
+<p class="sub">我们会根据您的货物和报价，提供最优惠的方案</p>
+<div class="fg"><label>您的姓名 *</label><input id="inqName" type="text" placeholder="如何称呼您" maxlength="20"></div>
+<div class="fg"><label>手机号 *</label><input id="inqPhone" type="tel" placeholder="您的联系电话" maxlength="11"></div>
+<div class="fg"><label>微信号</label><input id="inqWx" type="text" placeholder="方便微信沟通" maxlength="30"></div>
+<div class="fg"><label>备注</label><input id="inqNote" type="text" placeholder="货物品名、特殊要求等" maxlength="100"></div>
+<div style="font-size:11px;color:#64748b;margin-bottom:8px" id="inqSummary"></div>
+<button class="btn" onclick="submitInquiry()">✅ 提交询价</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<div class="floating-bar">
+<a href="tel:18237490110" class="btn-tel">📞 电话咨询</a>
+<a href="#" class="btn-wx" onclick="showWxModal();return false">💬 微信咨询</a>
+<a href="#" class="btn-share" onclick="sharePage();return false">📤 分享</a>
+</div>
+
+<script>
+
+var ZM={US:"US",UK:"UK",DE:"DE",CA:"CA",AU:"AU"},CN={US:"美国",UK:"英国",DE:"德国",CA:"加拿大",AU:"澳大利亚"};
+var SM={US:[["jiyun","集运小包"],["kong","空派专线"],["hai","海派专线"],["xsd","限时达"],["big","超大件"],["tk","卡派"]],UK:[["jiyun","集运小包"],["kong","空派专线"],["hai","海派专线"]],DE:[["jiyun","集运小包"],["kong","空派专线"],["hai","海派专线"]],CA:[["jiyun","集运小包"],["kong","空派专线"],["hai","海派专线"]],AU:[["jiyun","集运小包"],["kong","空派专线"],["hai","海派专线"]]};
+var AU_R8=[4385,4461,4462,4465,4467,4468,4470,4471,4472,4478,4487,4488,4489,4490,4674,4676,4677,4678,4694,4700,4702,4705,4721,4723,4726,4727,4728,4730,4731,4732,4733,4738,4739,4741,4743,4744,4745,4746,4756,4757,4799,4800,4801,4803,4804,4805,4806,4807,4808,4809,4824,5607,6275,6338,6356,6359,6372,6423,6642,6721,6740,6751,6765];
+var AU_R10=[2627,2628,2629,2630,2631,2632,2633,2642,2644,2645,2646,2648,2649,2650,2652,2653,2655,2656,2658,2660,2663,2665,2666,2669,2671,2672,2675,2680,2681,2700,2701,2702,2705,2706,2707,2710,2711,2712,2713,2714,2715,2716,2717,2720,2721,2722,2726,2727,2729,2731,2732,2733,2734,2736,2737,2738,2797,2798,2800,2803,2804,2805,2806,2807,2808,2809,2810,2818,2820,2823,2825,2826,2827,2828,2829,2830,2831,2832,2833,2834,2835,2836,2839,2840,2842,2846,2850,2852,2865,2867,2868,2871,2873,2877,2878,2879,2880,2890,3697,3699,3701,3705,3707,3708,3709,3719,3723,3740,3741,3778,3844,3862,3893,3895,3896,3898,3900,4025,4183,4184,4454,4474,4475,4491,4492,4493,4565,4581,4735,4736,4816,4817,4819,4821,4822,4823,4825,4828,4829,4830,4849,4850,4852,4854,4855,4856,4857,4858,4859,4860,4861,4865,4871,4872,4873,4874,4876,4877,4880,4881,4883,4884,4885,4886,4887,4888,4890,4891,4892,4895,5220,5221,5222,5223,5558,5600,5601,5690,5733,6161,6536,6705,6725,6727,6728,6731,6770,6958,7001,7005,7214,7215,7254,7259,7264,7270,7304,7306,7307,7310,7315,7316,7320,7321,7325,7330,7331,7466,7468,7469,7470];
+var AU_NOS=[2059,2898,2899,6798,6799,7151,7152,7153,7154,6324,4280,4300,3336,4875];
+function auR(p){var n=parseInt(p)||0;if(n>=1000&&n<=2999)return"r1";if(n>=3000&&n<=3999)return"r2";if(n>=4000&&n<=4999)return"r3";if(n>=5000&&n<=5999)return"r4";if(n>=6000&&n<=6999)return"r5";if(n>=7000&&n<=7999)return"r6";return null}
+function auRL(p){var n=parseInt(p)||0;if(n>=1000&&n<=2999)return"1000~2999";if(n>=3000&&n<=3999)return"3000~3999";if(n>=4000&&n<=4999)return"4000~4999";if(n>=5000&&n<=5999)return"5000~5999";if(n>=6000&&n<=6999)return"6000~6999";if(n>=7000&&n<=7999)return"7000~7999";return"未覆盖"}
+function getRF(p){var n=parseInt(p)||0;for(var i=0;i<AU_R8.length;i++){if(AU_R8[i]===n)return 8}for(var i=0;i<AU_R10.length;i++){if(AU_R10[i]===n)return 10}return 0}
+function isNS(p){var n=parseInt(p)||0;for(var i=0;i<AU_NOS.length;i++){if(AU_NOS[i]===n)return true}return false}
+// US big item zone lookup
+function usBigZone(zip){
+  var z=("00000"+zip).slice(-5),z3=parseInt(z.slice(0,3))||0,z2=parseInt(z.slice(0,2))||0,z1=parseInt(z[0])||0;
+  if(z2>=90&&z2<=92)return{n:"洛杉矶直航 90-92",p:{101:9.2,151:8.2,301:7.2,501:6.8,1001:6.7,2001:6.5,3001:6.4}};
+  if((z2>=93&&z2<=95)||(z3>=850&&z3<=853)||(z3>=890&&z3<=893))return{n:"洛杉矶直航 93-95/850-853/890-893",p:{101:13.6,151:11.3,301:9.2,501:8.7,1001:8.5,2001:8.3,3001:8.1}};
+  if(z2>=96&&z2<=99&&!((z3>=966&&z3<=969)||z3>=995))return{n:"洛杉矶直航 96-99",p:{101:15.4,151:14.8,301:13.4,501:11.9,1001:11.4,2001:11.3,3001:11.1}};
+  if(z2>=84&&z2<=89&&!((z3>=850&&z3<=853)||(z3>=890&&z3<=893)))return{n:"洛杉矶直航 84-89",p:{101:13.3,151:13.1,301:11.9,501:10.8,1001:10.5,2001:10.4,3001:9.9}};
+  if(z2>=80&&z2<=83)return{n:"洛杉矶直航 80-83",p:{101:15.5,151:15.2,301:13.6,501:12.3,1001:11.7,2001:11.6,3001:11.4}};
+  if(z1>=4&&z1<=7)return{n:"美中区 4-7",p:{101:16.0,151:15.7,301:13.4,501:12.5,1001:12.0,2001:11.9,3001:11.7}};
+  if(z2>=94&&z2<=95)return{n:"奥克兰直航 94-95",p:{101:11.2,151:11.0,301:9.3,501:8.5,1001:8.3,2001:8.1,3001:7.9}};
+  if(z2>=96&&z2<=99)return{n:"奥克兰直航 96-99",p:{101:15.0,151:14.4,301:12.5,501:12.0,1001:11.8,2001:11.6,3001:11.1}};
+  if(z2>=75&&z2<=77)return{n:"休斯顿直航 75-77",p:{101:11.8,151:11.6,301:10.8,501:9.1,1001:9.0,2001:8.8,3001:8.1}};
+  if(z1===7)return{n:"休斯顿直航 7",p:{101:12.3,151:12.1,301:11.1,501:10.6,1001:10.3,2001:10.0,3001:9.3}};
+  if(z1===4)return{n:"芝加哥/纽约 4",p:{101:13.9,151:13.7,301:12.7,501:11.4,1001:10.8,2001:10.3,3001:9.7}};
+  if((z2>=50&&z2<=56)||(z2>=60&&z2<=65))return{n:"芝加哥直航 50-56/60-65",p:{101:13.8,151:13.5,301:12.3,501:10.5,1001:10.4,2001:10.0,3001:9.7}};
+  if(z2>=66&&z2<=69)return{n:"芝加哥直航 66-69",p:{101:15.9,151:14.9,301:13.9,501:12.4,1001:12.0,2001:11.8,3001:11.6}};
+  if(z2>=20&&z2<=26)return{n:"纽约直航 20-26",p:{101:12.4,151:11.9,301:10.3,501:9.9,1001:9.6,2001:9.5,3001:8.5}};
+  if((z1===0||z1===1)&&!((z3>=6&&z3<=9)))return{n:"纽约直航 0-1",p:{101:12.3,151:12.0,301:10.4,501:9.9,1001:9.5,2001:9.1,3001:8.6}};
+  if((z3>=7&&z3<=8)||(z2>=10&&z2<=11))return{n:"纽约直航 07-08/10-11",p:{101:10.3,151:9.6,301:8.8,501:8.4,1001:8.3,2001:8.1,3001:7.8}};
+  if((z2>=27&&z2<=31)||(z2>=35&&z2<=39))return{n:"萨凡纳直航 27-31/35-39",p:{101:12.4,151:12.2,301:12.0,501:10.5,1001:10.0,2001:9.5,3001:8.5}};
+  if(z2>=32&&z2<=34)return{n:"迈阿密/坦帕直航 32-34",p:{101:10.0,151:9.8,301:9.5,501:8.6,1001:8.4,2001:8.2,3001:8.0}};
+  if(z1>=8||z1===9)return{n:"美西(邮编8-9)",p:{101:15.5,151:14.8,301:13.4,501:12.3,1001:11.7,2001:11.3,3001:11.1}};
+  return{n:"美东(邮编0-3)",p:{101:17.8,151:17.6,301:16.4,501:14.9,1001:14.4,2001:14.2,3001:13.7}};
+}
+// Pricing
+var PJ={ph:{UK:{f:56,n:29,5:60,10:59,15:59},CA:{f:90,n:35,5:76,10:73,15:72},AU:{f:80,n:28,5:61,10:59,15:58},DE:{f:130,n:30,5:71,10:67,15:64},USw:{f:135,n:39,5:88,10:84,15:82},USc:{f:135,n:39,5:88,10:84,15:82},USe:{f:135,n:39,5:88,10:84,15:82}},mg:{UK:{f:56,n:30,5:62,10:61,15:60},USw:{f:135,n:40,5:90,10:86,15:84},USc:{f:135,n:40,5:90,10:86,15:84},USe:{f:135,n:40,5:90,10:86,15:84},CA:{f:90,n:36,5:77,10:75,15:74},DE:{f:130,n:32,5:74,10:70,15:68},AU:{f:80,n:29,5:63,10:61,15:60}},tz:{UK:{f:56,n:34,5:69,10:69,15:68},USw:{f:135,n:44,5:97,10:94,15:92},USc:{f:135,n:44,5:97,10:94,15:92},USe:{f:135,n:44,5:97,10:94,15:92},CA:{f:90,n:40,5:85,10:83,15:82},AU:{f:80,n:33,5:70,10:68,15:67}}};
+var PK={ph:{USw:{12:66,21:63,51:62,71:61,101:58},USc:{12:66,21:63,51:62,71:61,101:58},USe:{12:65,21:62,51:61,71:60,101:57},UK:{21:46,45:46,100:45,300:45,500:44.5,1000:44.5},DE:{21:44.5,45:43.5,100:42.5,300:42.5,500:42.5,1000:42},CA:{12:60,21:54,71:52,101:50},AU:{f05:77,n05:22.5,21:44,50:43,100:42.5,300:42,500:41.5}},mg:{USe:{f05:150,n05:40,10:74,21:69,75:67,101:65},UK:{21:49.5,45:49.5,100:48,300:48},DE:{21:50.5,45:49.5,100:48.5,300:48.5}}};
+var AKp={r1:{f05:77,n05:22.5,21:44,50:43,100:42.5,300:42},r2:{f05:77,n05:23.5,21:44,50:43,100:42.5,300:42},r3:{f05:77,n05:24,21:46,50:45,100:44.5,300:44},r4:{f05:77,n05:26,21:47,50:46,100:45.5,300:45},r5:{f05:77,n05:26,21:47,50:46,100:45.5,300:45},r6:{f05:77,n05:28.5,21:52,50:51,100:50.5,300:50}};
+var AKm={r1:{f05:76,n05:26.5,21:51.5,50:51,100:50.5,300:50},r2:{f05:76,n05:26.5,21:51.5,50:51,100:50.5,300:50},r3:{f05:76,n05:28,21:53.5,50:53,100:52.5,300:52},r4:{f05:76,n05:29.5,21:59,50:58.5,100:58.5,300:57.5},r5:{f05:76,n05:29.5,21:59,50:58.5,100:58.5,300:57.5},r6:{f05:76,n05:32,21:64,50:63.5,100:63.5,300:62.5}};
+var AKt={r1:{f05:78,n05:30,21:57,50:57,75:57,100:57},r2:{f05:78,n05:30,21:57,50:57,75:57,100:57},r3:{f05:78,n05:30,21:64,50:64,75:64,100:63.5},r4:{f05:78,n05:30,21:66,50:66,75:66,100:66},r5:{f05:78,n05:30,21:66,50:66,75:66,100:66},r6:{f05:78,n05:30,21:72,50:72,75:72,100:71.5}};
+var PH={ph:{USw:{12:12.5,21:11.5,45:10.5,71:10.5,101:8.3,301:8.3},USc:{12:13.8,21:12.8,45:12.8,71:11.8,101:9.6,301:9.6},USe:{12:14.8,21:13.8,45:13.8,71:12.8,101:10.6,301:10.6},UK:{25:9.7,100:7.7,1000:7.7},DE:{5:18.9,11:15.4,21:9.9,45:7.9,101:7.4},CA:{21:12.2,45:12.2,71:11.3,101:10.8},AU:{f1:36,n1:9,11:8.5,50:8,100:7.5,300:7,500:6.5}},mg:{USw:{f1:85,n1:15,12:16.5,21:14.5,71:11.5,101:9.5},AU:{f1:38,n1:12.5,11:12,50:11.5,100:10,300:9.5}}};
+var AHp={r1:{f1:36,n1:9,11:8.5,50:8,100:7.5,300:7},r2:{f1:36,n1:9,11:8.5,50:8,100:7.5,300:7},r3:{f1:37,n1:10,11:9,50:8.5,100:8,300:7},r4:{f1:37.5,n1:12,11:11.5,50:11,100:10.5,300:10},r5:{f1:37.5,n1:15,11:14.5,50:14,100:13.5,300:13},r6:{f1:39,n1:18,11:17.5,50:17,100:16.5,300:16}};
+var AHm={r1:{f1:38,n1:12.5,11:12,50:11.5,100:10,300:9.5},r2:{f1:38,n1:12.5,11:12,50:11.5,100:10,300:9.5},r3:{f1:40,n1:12.5,11:12.5,50:12,100:10.5,300:10},r4:{f1:40,n1:15.5,11:15,50:14.5,100:12.5,300:12.5},r5:{f1:40,n1:18.5,11:18,50:17.5,100:16,300:15.5},r6:{f1:42,n1:21.5,11:21,50:20.5,100:19,300:18.5}};
+
+function gP(d,w){var ks=Object.keys(d),ts=[];for(var i=0;i<ks.length;i++){var k=ks[i];if(k==="f"||k==="n"||k==="f05"||k==="n05"||k==="f1"||k==="n1")continue;var n=parseFloat(k);if(!isNaN(n)&&n>0)ts.push({k:k,v:n})}ts.sort(function(a,b){return a.v-b.v});for(var i=ts.length-1;i>=0;i--){if(w>=ts[i].v)return d[ts[i].k]}return ts.length>0?d[ts[0].k]:null}
+function switchTab(t){document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("active")});document.querySelector('.tab[data-tab="'+t+'"]').classList.add("active");onCountryChange()}
+function onCountryChange(){var c=document.getElementById("ct").value,s=document.getElementById("sv"),st=document.querySelector(".tab.active").getAttribute("data-tab");s.innerHTML="";var a=SM[c]||[],fd=false;for(var i=0;i<a.length;i++){var o=document.createElement("option");o.value=a[i][0];o.textContent=a[i][1];if(a[i][0]===st){o.selected=true;fd=true}s.appendChild(o)}if(!fd&&a.length>0)s.value=a[0][0];var showZn=c==="US",showAuPc=c==="AU",showUsBig=(c==="US"&&st==="big");document.getElementById("znGrp").style.display=showZn?"block":"none";document.getElementById("auPcGrp").style.display=showAuPc?"block":"none";document.getElementById("usBigPcGrp").style.display=showUsBig?"block":"none";document.getElementById("addrGrp").style.display=c?"":"none";document.getElementById("res").style.display="none"}
+function togglePrivateAddr(){document.getElementById("privAddrToggle").classList.toggle("active")}
+function pfee(price,dt,w,ex){var pa=document.getElementById("privAddrToggle").classList.contains("active");if(!pa)return{p:price,d:dt};var f=5*w;ex.push('<span class="extra-tag" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:5px 12px;border-radius:6px;font-size:12px">私人地址加收 5元/KG</span>');return{p:price+f,d:dt+" (含私宅"+Math.round(f)+"元)"}}
+function calc(){
+var c=document.getElementById("ct").value,s=document.getElementById("sv").value,g=document.getElementById("cg").value,w=parseFloat(document.getElementById("wt").value)||0,z=document.getElementById("zn").value,r=document.getElementById("res"),p=document.getElementById("pr"),d=document.getElementById("dt"),n=document.getElementById("nt"),ex=document.getElementById("extra");if(!c||!s||w<=0){alert("请先选完再查");return}var zk=ZM[c],price=0,dt="",note="",extras=[],auRF=0;
+if(c==="AU"){var pc=document.getElementById("auPc").value.trim();if(!pc||pc.length!==4||isNaN(parseInt(pc))){alert("请输入4位澳大利亚邮编");return}var pn=parseInt(pc);if(isNS(pn)){r.style.display="block";p.textContent="无服务";d.textContent="该邮编地址为岛区/无法派送区域";n.textContent="请咨询客服";ex.innerHTML='<span class="extra-tag" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:5px 12px;border-radius:6px;font-size:12px">该邮编无派送服务</span>';return}var rk=auR(pc);if(!rk){r.style.display="block";p.textContent="未覆盖";d.textContent="该邮编不在服务范围内";n.textContent="请咨询客服";ex.innerHTML='<span class="extra-tag" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:5px 12px;border-radius:6px;font-size:12px">邮编 '+pc+' 暂无服务</span>';return}var rf=getRF(pn);if(rf>0){auRF=rf;extras.push('<span class="extra-tag" style="background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;padding:5px 12px;border-radius:6px;font-size:12px">偏远加收 '+rf+'元/KG</span>')}dt="邮编 "+pc+" ("+auRL(pc)+")"}
+// Jiyun
+if(s==="jiyun"){var d2=PJ[g];if(!d2){showNo(r,p,d,n,ex);return}var zk2=zk;if(zk==="US"){zk2=z==="w"?"USw":z==="c"?"USc":"USe"}var d3=d2[zk2]||d2[zk];if(!d3){showNo(r,p,d,n,ex);return}
+  if(w<=4.5){price=d3.f+(Math.ceil(w)-1)*d3.n;dt+=" 首重"+d3.f+"+续重"+(Math.ceil(w)-1)+"kg="+price+"元"}
+  else{var ra=d3[5];if(w>=10)ra=d3[10];if(w>=15)ra=d3[15];if(!ra){showNo(r,p,d,n,ex);return}price=ra*w;dt+=" 单价"+ra+"元×"+w+"kg="+Math.round(price)+"元"}
+  if(c==="AU"){var tf=auRF*w;if(tf>0){price+=tf;dt+=" (含偏远"+Math.round(tf)+"元)"}}
+  var fp=pfee(price,dt,w,extras);price=fp.p;dt=fp.d;
+}
+// Kong
+else if(s==="kong"){if(c==="AU"){var ad;if(g==="ph")ad=AKp;else if(g==="mg")ad=AKm;else if(g==="tz")ad=AKt;else{showNo(r,p,d,n,ex);return}var rk=auR(document.getElementById("auPc").value.trim());if(!rk){showNo(r,p,d,n,ex);return}var pr=ad[rk];if(!pr){showNo(r,p,d,n,ex);return}
+  if(w<=4.5){price=pr.f05+(Math.ceil(w*2)-1)*pr.n05;dt+=" 首0.5KG "+pr.f05+"+续0.5KG "+(Math.ceil(w*2)-1)+"×"+pr.n05+"="+Math.round(price)+"元"}
+  else{var r2=pr[21];if(w>=50)r2=pr[50];if(w>=100)r2=pr[100];if(w>=300)r2=pr[300];if(!r2){showNo(r,p,d,n,ex);return}price=r2*w;dt+=" 单价"+r2+"元×"+w+"kg="+Math.round(price)+"元"}
+  var tf=auRF*w;if(tf>0){price+=tf;dt+=" (含偏远"+Math.round(tf)+"元)"}
+  var fp=pfee(price,dt,w,extras);price=fp.p;dt=fp.d;
+}else{var d2=PK[g];if(!d2){showNo(r,p,d,n,ex);return}var zk2=zk;if(zk==="US"){zk2=z==="w"?"USw":z==="c"?"USc":"USe"}var d3=d2[zk2]||d2[zk];if(!d3){showNo(r,p,d,n,ex);return}var r2=gP(d3,w);if(!r2){showNo(r,p,d,n,ex);return}price=r2*w;dt+=" 单价"+r2+"元×"+w+"kg="+Math.round(price)+"元"
+  var fp=pfee(price,dt,w,extras);price=fp.p;dt=fp.d;
+}}
+// Hai
+else if(s==="hai"){if(c==="AU"){var ad;if(g==="ph")ad=AHp;else if(g==="mg")ad=AHm;else{showNo(r,p,d,n,ex);return}var rk=auR(document.getElementById("auPc").value.trim());if(!rk){showNo(r,p,d,n,ex);return}var pr=ad[rk];if(!pr){showNo(r,p,d,n,ex);return}
+  if(w<=10){price=pr.f1+(Math.ceil(w)-1)*pr.n1;dt+=" 首1KG "+pr.f1+"+续重"+(Math.ceil(w)-1)+"×"+pr.n1+"="+Math.round(price)+"元"}
+  else{var r2=pr[11];if(w>=50)r2=pr[50];if(w>=100)r2=pr[100];if(w>=300)r2=pr[300];if(!r2){showNo(r,p,d,n,ex);return}price=r2*w;dt+=" 单价"+r2+"元×"+w+"kg="+Math.round(price)+"元"}
+  var tf=auRF*w;if(tf>0){price+=tf;dt+=" (含偏远"+Math.round(tf)+"元)"}
+  var fp=pfee(price,dt,w,extras);price=fp.p;dt=fp.d;
+}else{var d2=PH[g];if(!d2){showNo(r,p,d,n,ex);return}var zk2=zk;if(zk==="US"){zk2=z==="w"?"USw":z==="c"?"USc":"USe"}var d3=d2[zk2]||d2[zk];if(!d3){showNo(r,p,d,n,ex);return}var r2=gP(d3,w);if(!r2){showNo(r,p,d,n,ex);return}price=r2*w;dt+=" 单价"+r2+"元×"+w+"kg="+Math.round(price)+"元"
+  var fp=pfee(price,dt,w,extras);price=fp.p;dt=fp.d;
+}}
+// XSD
+else if(s==="xsd"){if(c!=="US"){showNo(r,p,d,n,ex,"限时达仅支持美国");return}var r2=gP({12:14.4,21:13.4,45:11.9,101:9.4,501:9.4},w);if(!r2){showNo(r,p,d,n,ex);return}price=r2*w;dt="限时达 "+r2+"元×"+w+"kg="+Math.round(price)+"元";note="美森/以星/合德，延误有赔偿";var fp=pfee(price,dt,w,extras);price=fp.p;dt=fp.d;}
+// Big
+else if(s==="big"){if(c!=="US"){showNo(r,p,d,n,ex,"超大件仅支持美国");return}var zc=document.getElementById("usBigPc").value.trim();if(!zc||zc.length<3||isNaN(parseInt(zc))){alert("请输入美国邮编（至少3位）");return}var zone=usBigZone(zc);if(w<101){r.style.display="block";p.textContent="不足101kg";d.textContent="超大件101kg起收，"+zone.n;n.textContent="";ex.innerHTML='';return}var r2=gP(zone.p,w);if(!r2){showNo(r,p,d,n,ex);return}price=r2*w+500;dt="[超大件 "+zone.n+"] 单价"+r2+"元×"+w+"kg+派送费500="+Math.round(price)+"元";var fp=pfee(price,dt,w,extras);price=fp.p;dt=fp.d;}
+// TK
+else if(s==="tk"){if(c!=="US"){showNo(r,p,d,n,ex,"卡派仅支持美国");return}if(w<301){r.style.display="block";p.textContent="不足301kg";d.textContent="卡派301kg起收";n.textContent="";ex.innerHTML='';return}var r2=gP({301:7.7,501:7.2,1001:6.7,2001:6.3,3001:6.1},w);if(!r2){showNo(r,p,d,n,ex);return}price=r2*w;dt="卡派 "+r2+"元×"+w+"kg="+Math.round(price)+"元";var fp=pfee(price,dt,w,extras);price=fp.p;dt=fp.d;}
+// Display
+if(price>0){r.style.display="block";p.innerHTML="¥"+Math.round(price).toLocaleString();d.textContent=dt;n.textContent=note;
+var h='<span class="extra-tag" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;padding:5px 12px;border-radius:6px;font-size:12px">'+CN[c]+'</span>';
+h+='<span class="extra-tag" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;padding:5px 12px;border-radius:6px;font-size:12px">'+document.querySelector('#sv option:checked').textContent+'</span>';
+h+='<span class="extra-tag" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;padding:5px 12px;border-radius:6px;font-size:12px">'+document.querySelector('#cg option:checked').textContent+'</span>';
+h+='<span class="extra-tag" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;padding:5px 12px;border-radius:6px;font-size:12px">'+w+'KG</span>';
+if(c==="AU"){h+='<span class="extra-tag" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;padding:5px 12px;border-radius:6px;font-size:12px">邮编 '+document.getElementById("auPc").value.trim()+' ('+auRL(document.getElementById("auPc").value.trim())+')</span>'}
+ex.innerHTML=h+extras.join('')}else{showNo(r,p,d,n,ex,"暂无匹配")}}
+function showNo(r,p,d,n,ex,msg){r.style.display="block";p.textContent=msg||"暂无数据";d.textContent="请尝试其他服务";n.textContent="";ex.innerHTML='<span class="extra-tag" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;padding:5px 12px;border-radius:6px;font-size:12px">请联系客服 18237490110 孔先生</span>'}
+onCountryChange();
+
+
+/* === 新功能 === */
+var lastQuote = null;
+var inqWrap = document.getElementById("inqWrap");
+
+function showInquiryModal() {
+  if (!lastQuote || !lastQuote.c) { showToast("请先查询报价", "error"); return; }
+  var svEl = document.querySelector("#sv option:checked");
+  if (!svEl) return;
+  document.getElementById("inqSummary").innerHTML = "<strong>询价内容：</strong>" + CN[lastQuote.c] + " · " + svEl.textContent + " · " + lastQuote.w + "KG" + (lastQuote.price ? " · 约¥" + lastQuote.price.toLocaleString() : "");
+  document.getElementById("modalOverlay").classList.add("show");
+  document.getElementById("inqName").value = "";
+  document.getElementById("inqPhone").value = "";
+  document.getElementById("inqWx").value = "";
+  document.getElementById("inqNote").value = "";
+}
+
+function hideInquiryModal(e) {
+  if (e && e.target !== document.getElementById("modalOverlay")) return;
+  document.getElementById("modalOverlay").classList.remove("show");
+}
+
+function submitInquiry() {
+  var name = document.getElementById("inqName").value.trim();
+  var phone = document.getElementById("inqPhone").value.trim();
+  if (!name) { showToast("请填写您的姓名", "error"); return; }
+  if (!phone || phone.length < 7) { showToast("请填写正确的手机号", "error"); return; }
+  var wx = document.getElementById("inqWx").value.trim();
+  var note = document.getElementById("inqNote").value.trim();
+  var inqs = JSON.parse(localStorage.getItem("yd_inquiries") || "[]");
+  inqs.push({t: new Date().toISOString(), name: name, phone: phone, wx: wx, note: note, quote: lastQuote});
+  localStorage.setItem("yd_inquiries", JSON.stringify(inqs));
+  showToast("询价已提交！孔先生会尽快联系您");
+  hideInquiryModal();
+}
+
+function showToast(msg, type) {
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast" + (type === "error" ? " error" : "");
+  t.style.display = "block";
+  setTimeout(function() { t.style.display = "none"; }, 3000);
+}
+
+function sharePage() {
+  if (navigator.share) {
+    navigator.share({title: "义鼎国际 · 在线询价", text: "跨境物流运费查询，一键获取报价", url: window.location.href}).catch(function(){});
+  } else {
+    prompt("复制链接分享给客户：", window.location.href);
+  }
+}
+
+function showWxModal() {
+  showToast("添加微信号：18237490110");
+}
+
+var origCalc = calc;
+calc = function() {
+  origCalc();
+  var pr = document.getElementById("pr");
+  var res = document.getElementById("res");
+  if (res.style.display !== "none") {
+    inqWrap.style.display = "block";
+    var pt = pr.textContent;
+    if (pt && pt !== "--" && pt.indexOf("无") === -1 && pt.indexOf("不足") === -1 && pt.indexOf("未覆盖") === -1) {
+      var pv = parseInt(pt.replace(/[^\d]/g, "")) || 0;
+      if (pv > 0) {
+        lastQuote = {c: document.getElementById("ct").value, s: document.getElementById("sv").value, g: document.getElementById("cg").value, w: parseFloat(document.getElementById("wt").value) || 0, price: pv};
+      }
+    }
+  }
+};
+</script>
+</body>
+</html>
