@@ -613,6 +613,12 @@ function postalMatchWidth(description,postcode){
  return matchWidth(excluded)?0:matchWidth(included);
 }
 function postalMatches(description,postcode){return postalMatchWidth(description,postcode)>0;}
+function europeanOversizeZone(row,postcode){
+ if(row.info==='全境')return true;
+ const codes=String(row.info||'').toUpperCase().match(/[A-Z]\d[A-Z0-9]|\b\d{2}\b/g)||[];
+ const zip=postcode.toUpperCase().replace(/\s/g,'');
+ return codes.includes(zip.slice(0,row.label.includes('爱尔兰')?3:2));
+}
 function resolve(input){const g=QUOTE_DATA.groups.find(g=>g.id===input.group);const p=g?.products.find(p=>p.id===input.product);const r=p?.rows.find(r=>r.id===input.destination);if(!r)throw Error('请选择有效的线路、产品和目的地区域');return {g,p,r};}
 function computeQuote(input){
  const {g,p,r}=resolve(input),actual=Number(input.weight),pieces=Number(input.pieces),postcode=String(input.postcode||'').trim().toUpperCase(),address=input.addressType||'private';
@@ -687,10 +693,10 @@ function computeQuote(input){
  if(g.id==='eu-large'){
   if(!postcode)error('欧洲超大件请填写邮编以核对分区');
   if(p.id==='greece')pending('希腊需 VAT，岛屿和无服务邮编须人工核实');
-  else if(r.info!=='全境'){
-   const codes=String(r.info||'').match(/[A-Z]\d[A-Z0-9]|\b\d{2}\b/g)||[];
-   const prefix=/爱尔兰/.test(r.label)?postcode.replace(/\s/g,'').slice(0,3):postcode.slice(0,2);
-   if(!codes.includes(prefix))error('邮编与所选欧洲超大件分区不一致');
+  else if(!europeanOversizeZone(r,postcode)){
+   const country=r.label.split(' · ')[0];
+   const match=p.rows.find(row=>row.label.split(' · ')[0]===country&&europeanOversizeZone(row,postcode));
+   error(match?'邮编对应 '+match.label+'，请切换分区':'该邮编未匹配 '+country+' 的超大件分区，请确认国家和派送范围');
   }
  }
  if(g.id==='jiyun'){
@@ -895,20 +901,35 @@ function computeQuote(input){
   if(p.id==='sensitive'&&commodity.startsWith('cosmetic'))add('化妆品附加',7*q.charge);
   if(!['parcel','perfume'].includes(p.id)){
    eachCarton(({pieces,per,long,second,girth,perActual,cbm},add,pending,error)=>{
-    if(per>=39||girth>=300)pending('欧洲空派超大件：最低140欧/件及旺季90欧/件，需按服务商、日期及汇率确认');
-    else if(perActual>=24||cbm*1e6/5000/pieces>=29||long>=100||second>=75)pending('欧洲空派大件：德国35欧/件、非德国40欧/件及旺季10欧/件，需确认汇率和服务商');
+    const volumetric=cbm*1e6/5000/pieces;
+    const label='欧洲空派 UPS ';
+    const day=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai'}).format(new Date());
+    const peak=day>='2026-09-01'&&day<='2027-02-14';
+    if(perActual>=69||long>274||long+second>400||girth>400)
+     error(label+'超过常规收寄范围。特殊件原表最低1200欧元/件，需单询');
+    if(long>200)error(label+'最长边超过常规超大件2米范围，收寄与费用需单询');
+    const oversized=per>=39||volumetric>=39||girth>=300;
+    if(oversized||perActual>=24||volumetric>=29||long>=100||second>=75){
+     const base=oversized?140:r.label==='德国'?35:40;
+     const seasonal=peak?(oversized?90:10):0;
+     pending(label+(oversized?'超大件最低':'大件')+' '+(base+seasonal)+' 欧元/件 × '+pieces+' 件 = '+(base+seasonal)*pieces+' 欧元'+(seasonal?'（含旺季 '+seasonal+' 欧元/件）':'')+'，承运商及人民币结算金额待确认');
+    }
    });
   }
  }else if(g.id==='eu-sea'){
   if(p.id!=='parcel'&&address==='private'){
-   if(october17&&p.id==='standard')add('住宅旺季附加',1.5*q.charge,'1.5元/KG');
+   if(october17&&p.id==='standard'){
+    const oversized=cartons.filter(b=>b.girth>=300&&b.girth<399).length;
+    if(!oversized)add('住宅旺季附加',1.5*q.charge,'1.5元/KG');
+    else if(oversized!==cartons.length)pending('普通件与免住宅费的超大件混装，普通件住宅计费重待确认');
+   }
    else add('私人地址',100);
   }
   if(p.id==='j1'){
    if(address==='business'||address==='pickup')add('非亚马逊地址',100);
    if(pieces===1)add('单票单件',100);
    if(!['none','unknown'].includes(remote))add('J1 偏远附加',5*q.charge,'5元/KG');
-   eachCarton(({pieces,perActual,long,second,girth,rawVw},add,pending,error)=>{
+   eachCarton(({pieces,perActual,long,second,third,girth,rawVw},add,pending,error)=>{
     const volumetric=rawVw/pieces;
     if(pieces>1&&!long)pending('J1 多箱请按实际单箱重量及箱规复核附加费');
     if(r.label==='法国'){
@@ -938,10 +959,13 @@ function computeQuote(input){
   }
   if(p.id==='j1'&&commodity.startsWith('cosmetic'))add('化妆品附加',q.charge*({cosmetic:1,cosmetic300:2,cosmetic500:3}[commodity]));
   if(p.id==='standard'){
-   eachCarton(({pieces,per,long,second,girth},add,pending,error)=>{
-    if(per>70||girth>=399)error('达到欧洲海派快递超大超重限制，请转超大件');
-    if(girth>=300){add('超大件',500*pieces);if(october17)add('超大件旺季附加',860*pieces);}
-    else if(per>25||long>100||second>75||input.nonStandard){add('大件附加',50*pieces);if(october17)add('大件旺季附加',80*pieces);}
+   eachCarton(({pieces,perActual,cbm,long,second,girth},add,pending,error)=>{
+    const volumetric=cbm*1e6/(girth>=300?5000:p.divisor)/pieces;
+    const boxWeight=Math.max(perActual,volumetric);
+    if(boxWeight>70||girth>401)error('超过欧洲海派 UPS 单箱70KG或围长401CM，快递拒收，请改走卡派');
+    if(girth>=399)pending('围长399–401CM处于原表未明确的区间，收寄和费用需确认');
+    else if(girth>=300){add('超大件',500*pieces);if(october17)add('超大件旺季附加',860*pieces);}
+    else if(boxWeight>25||long>100||second>75||input.nonStandard){add('大件附加',50*pieces);if(october17)add('大件旺季附加',80*pieces);}
    });
    if(!['none','unknown'].includes(remote))add('欧洲偏远',october17?Math.max(3*q.charge,100):Math.max(6*q.charge,200));
   }
@@ -1091,6 +1115,10 @@ function autoZone(){const {g,p}=selected(),zip=$('postcode').value.trim();let in
  if($('usPackaging'))$('usPackaging').classList.toggle('hidden',g.id!=='us-air'||p.id!=='general');
  if(/^\d{5}$/.test(zip)){const f=Number(zip[0]),t=Number(zip.slice(0,2));if(g.id==='us-air')index=p.id==='general'?(f>=8?0:f>=4?1:2):([97,98].includes(t)?1:f>=8?2:f>=4?1:0);if(g.id==='us-sea'&&!p.id.endsWith('pickup'))index=f>=8?0:f>=4?1:2;if(g.id==='us-xsd')index=t>=97?1:f>=8?0:f>=4?2:3;if(g.id==='us-ddp')index=f>=8?2:f>=6?1:0;}
  if(g.id.startsWith('au-')&&/^\d{4}$/.test(zip))index=p.rows.findIndex(r=>{const a=r.label.match(/\d+/g);return a&&Number(zip)>=Number(a[0])&&Number(zip)<=Number(a[1]);});
+ if(g.id==='eu-large'&&p.id!=='greece'&&zip){
+  const country=selected().r?.label.split(' · ')[0];
+  index=p.rows.findIndex(row=>row.label.split(' · ')[0]===country&&europeanOversizeZone(row,zip));
+ }
  if(g.id==='us-large'&&/^\d{5}$/.test(zip)){
   const widths=p.rows.map(r=>postalMatchWidth(r.label.split(' · ').at(-1),zip));
   const best=Math.max(0,...widths);
@@ -1288,6 +1316,7 @@ function fillInquiry(){
    $('euCountry').value=c.code;
    const row=selected().p.rows.find(r=>r.label.includes(c.name)||(group.id==='jiyun'&&r.label.includes('欧盟')));
    if(row)$('destination').value=row.id;
+   autoZone();
   }
   if(group.id==='jiyun'&&info.country!=='eu'){
    const name=countryAliases[info.country][0];
